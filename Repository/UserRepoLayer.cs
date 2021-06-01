@@ -22,11 +22,31 @@ namespace Repository
             return user;
         }
 
+        public async Task<AppUser> GetUserByUsername(string username)
+        {
+            var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.UserName == username);
+
+            return user;
+        }
+
         public async Task<IEnumerable<AppUser>> getUsers()
         {
             var users = await _dbContext.Users.ToListAsync();
 
             return users;
+        }
+
+        public async Task<AppUser> Register(AppUser user)
+        {
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+
+            return user;
+        }
+
+        public async Task<bool> UserExists(string username)
+        {
+            return await _dbContext.Users.AnyAsync(x => x.UserName == username.ToLower());
         }
     }
 }

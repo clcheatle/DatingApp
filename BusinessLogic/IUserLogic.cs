@@ -18,5 +18,34 @@ namespace BusinessLogic
          /// <param name="i"></param>
          /// <returns></returns>
          public Task<AppUser> GetUserById(int id);
+
+        /// <summary>
+        /// Given a username and password, register a new user
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+         public Task<UserDto> Register(string username, string password);
+
+        /// <summary>
+        /// Check to see if the user name already exists
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+         public Task<bool> UserExists(string username);
+
+        /// <summary>
+        /// Get user by username
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+         public Task<AppUser> GetUserByUsername(string username);
+
+        /// <summary>
+        /// Method to check password to login in user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+         public bool Login(AppUser user, string password);
     }
 }
