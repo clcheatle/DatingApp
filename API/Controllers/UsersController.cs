@@ -15,7 +15,7 @@ namespace API.Controllers
             _userLogic = userLogic;
         }
 
-        [Authorize]
+        
         [HttpGet]
         public async Task<IEnumerable<AppUser>> GetUsers()
         {
@@ -24,7 +24,7 @@ namespace API.Controllers
             return users;
         }
 
-        [Authorize]
+        
         [HttpGet("{id}")]
         public async Task<AppUser> GetUserById(int id)
         {
