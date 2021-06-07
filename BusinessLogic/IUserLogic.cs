@@ -10,7 +10,7 @@ namespace BusinessLogic
          /// Gets a list of users from the repo layer
          /// </summary>
          /// <returns></returns>
-         public Task<IEnumerable<AppUser>> GetUsers();
+         public Task<IEnumerable<MemberDto>> GetUsers();
 
          /// <summary>
          /// Get a user by id from the repo layer
@@ -39,7 +39,8 @@ namespace BusinessLogic
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
-         public Task<AppUser> GetUserByUsername(string username);
+         public Task<MemberDto> GetUserByUsername(string username);
+         public Task<AppUser> GetUserForLogin(string username);
 
         /// <summary>
         /// Method to check password to login in user

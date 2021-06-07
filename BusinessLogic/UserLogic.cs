@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using BusinessLogic.Interfaces;
 using Models;
 using Repository;
@@ -11,16 +12,18 @@ namespace BusinessLogic
     {
         private readonly IUserRepoLayer _userRepoLayer;
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
 
-        public UserLogic(IUserRepoLayer userRepoLayer, ITokenService tokenService)
+        public UserLogic(IUserRepoLayer userRepoLayer, ITokenService tokenService, IMapper mapper)
         {
             _userRepoLayer = userRepoLayer;
             _tokenService = tokenService;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<AppUser>> GetUsers()
+        public async Task<IEnumerable<MemberDto>> GetUsers()
         {
-            IEnumerable<AppUser> users = await _userRepoLayer.getUsers();
+            IEnumerable<MemberDto> users = await _userRepoLayer.GetMembersAsync();
 
             return users;
         }
@@ -28,7 +31,7 @@ namespace BusinessLogic
         
         public async Task<AppUser> GetUserById(int id)
         {
-            AppUser user = await _userRepoLayer.getUserById(id);
+            AppUser user = await _userRepoLayer.getUserByIdAsync(id);
 
             return user;
         }
@@ -37,7 +40,7 @@ namespace BusinessLogic
         {
             AppUser user = UserMapper.GetNewUserWithHashedPassword(password);
             user.UserName = username;
-            AppUser newUser = await _userRepoLayer.Register(user);
+            AppUser newUser = await _userRepoLayer.RegisterAsync(user);
             UserDto regUser = new UserDto
             {
                 Username = newUser.UserName,
@@ -49,12 +52,18 @@ namespace BusinessLogic
 
         public async Task<bool> UserExists(string username)
         {
-            return await _userRepoLayer.UserExists(username);
+            return await _userRepoLayer.UserExistsAsync(username);
         }
 
-        public async Task<AppUser> GetUserByUsername(string username)
+        public async Task<MemberDto> GetUserByUsername(string username)
         {
-            return await _userRepoLayer.GetUserByUsername(username);
+            var user = await _userRepoLayer.GetMemberAsync(username);
+            return _mapper.Map<MemberDto>(user);
+        }
+
+        public async Task<AppUser> GetUserForLogin(string username)
+        {
+            return await _userRepoLayer.GetUserByUsernameAsync(username);
         }
 
         public bool Login(AppUser user, string password)

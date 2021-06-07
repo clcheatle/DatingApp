@@ -1,4 +1,5 @@
 using BusinessLogic;
+using BusinessLogic.Helpers;
 using BusinessLogic.Interfaces;
 using BusinessLogic.Services;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ namespace API.Extensions
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserLogic, UserLogic>();
             services.AddScoped<IUserRepoLayer, UserRepoLayer>();
+            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
             return services;
         }

@@ -7,6 +7,7 @@ using Models;
 
 namespace API.Controllers
 {
+    [Authorize]
     public class UsersController : BaseApiController
     {
         private readonly IUserLogic _userLogic;
@@ -17,18 +18,17 @@ namespace API.Controllers
 
         
         [HttpGet]
-        public async Task<IEnumerable<AppUser>> GetUsers()
+        public async Task<IEnumerable<MemberDto>> GetUsers()
         {
             var users = await _userLogic.GetUsers();
 
             return users;
         }
 
-        
-        [HttpGet("{id}")]
-        public async Task<AppUser> GetUserById(int id)
+        [HttpGet("{username}")]
+        public async Task<MemberDto> GetUserByUsername(string username)
         {
-            var users = await _userLogic.GetUserById(id);
+            var users = await _userLogic.GetUserByUsername(username);
 
             return users;
         }
