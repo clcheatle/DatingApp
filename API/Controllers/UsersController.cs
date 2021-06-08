@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using BusinessLogic;
 using Microsoft.AspNetCore.Authorization;
@@ -32,5 +33,15 @@ namespace API.Controllers
 
             return users;
         }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+        {
+            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var updateSuccess = await _userLogic.UpdateUser(memberUpdateDto, username);
+            if(updateSuccess) return NoContent();
+
+            return BadRequest("Failed to update the user");
+        } 
     }
 }

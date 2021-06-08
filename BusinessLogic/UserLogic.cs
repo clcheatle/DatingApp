@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using BusinessLogic.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Models;
 using Repository;
 
@@ -71,6 +73,18 @@ namespace BusinessLogic
             bool isLogin = UserMapper.CheckLoginPassword(user, password);
 
             return isLogin;
+        }
+
+        public async Task<bool> UpdateUser(MemberUpdateDto memberUpdateDto, string username)
+        {
+            var user = await GetUserForLogin(username);
+            _mapper.Map(memberUpdateDto, user);
+
+            _userRepoLayer.Update(user);
+
+            if(await _userRepoLayer.SaveAllAsync()) return true;
+
+            return false;
         }
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Models;
 
 namespace BusinessLogic
@@ -48,5 +49,7 @@ namespace BusinessLogic
         /// <param name="user"></param>
         /// <returns></returns>
          public bool Login(AppUser user, string password);
+
+         public Task<bool> UpdateUser(MemberUpdateDto memberUpdateDto, string username);
     }
 }
