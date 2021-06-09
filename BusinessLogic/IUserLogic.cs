@@ -51,5 +51,9 @@ namespace BusinessLogic
          public bool Login(AppUser user, string password);
 
          public Task<bool> UpdateUser(MemberUpdateDto memberUpdateDto, string username);
+
+         public Task<bool> SaveAllAsync();
+
+
     }
 }

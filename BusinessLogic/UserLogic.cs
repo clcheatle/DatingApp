@@ -86,5 +86,10 @@ namespace BusinessLogic
 
             return false;
         }
+
+        public async Task<bool> SaveAllAsync()
+        {
+            return await _userRepoLayer.SaveAllAsync();
+        }
     }
 }
