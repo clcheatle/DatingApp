@@ -2,6 +2,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using BusinessLogic;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,13 @@ namespace API.Controllers
     public class AccountController : BaseApiController
     {
         private readonly IUserLogic _userLogic;
+        private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
-        public AccountController(IUserLogic userLogic, ITokenService tokenService)
+        public AccountController(IUserLogic userLogic, ITokenService tokenService, IMapper mapper)
         {
             _userLogic = userLogic;
             _tokenService = tokenService;
+            _mapper = mapper;
         }
 
         [HttpPost("register")]
@@ -27,7 +30,10 @@ namespace API.Controllers
                 return BadRequest("Username is taken");
 
             }
-            UserDto newUser = await _userLogic.Register(registerDto.Username.ToLower(), registerDto.Password);
+
+            var user = _mapper.Map<AppUser>(registerDto);
+
+            UserDto newUser = await _userLogic.Register(user, registerDto);
 
             return newUser;
         }
@@ -45,7 +51,8 @@ namespace API.Controllers
             {
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
-                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
+                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
+                KnownAs = user.KnownAs
             };
 
             return logUser;

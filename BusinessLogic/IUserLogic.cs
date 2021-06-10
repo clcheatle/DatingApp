@@ -26,7 +26,7 @@ namespace BusinessLogic
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-         public Task<UserDto> Register(string username, string password);
+         public Task<UserDto> Register(AppUser user, RegisterDto registerDto);
 
         /// <summary>
         /// Check to see if the user name already exists

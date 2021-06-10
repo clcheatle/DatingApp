@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BusinessLogic.Interfaces;
@@ -38,15 +40,21 @@ namespace BusinessLogic
             return user;
         }
 
-        public async Task<UserDto> Register(string username, string password)
+        public async Task<UserDto> Register(AppUser user, RegisterDto registerDto)
         {
-            AppUser user = UserMapper.GetNewUserWithHashedPassword(password);
-            user.UserName = username;
+            using var hmac = new HMACSHA512();
+            
+            user.UserName = registerDto.Username.ToLower();
+            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
+            user.PasswordSalt = hmac.Key;
+
             AppUser newUser = await _userRepoLayer.RegisterAsync(user);
-            UserDto regUser = new UserDto
+
+            UserDto regUser = new UserDto 
             {
                 Username = newUser.UserName,
-                Token = _tokenService.CreateToken(newUser)
+                Token = _tokenService.CreateToken(user),
+                KnownAs = newUser.KnownAs
             };
 
             return regUser;
