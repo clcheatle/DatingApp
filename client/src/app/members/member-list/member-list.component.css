@@ -1,0 +1,9 @@
+.filter-form{
+    display: flex;
+    flex-direction: row;
+    margin: 3rem;
+}
+
+.filter-form button{
+    margin-left: 1rem;
+}

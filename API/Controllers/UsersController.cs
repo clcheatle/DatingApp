@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Models.Helpers;
 
 namespace API.Controllers
 {
@@ -29,11 +30,20 @@ namespace API.Controllers
 
         
         [HttpGet]
-        public async Task<IEnumerable<MemberDto>> GetUsers()
+        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
         {
-            var users = await _userLogic.GetUsers();
+            var user = await _userLogic.GetUserByUsername(User.GetUsername());
+            userParams.CurrentUsername = user.Username;
 
-            return users;
+            if (string.IsNullOrEmpty(userParams.Gender))
+            {
+                userParams.Gender = user.Gender == "male" ? "female" : "male";
+            }
+            
+            var users = await _userLogic.GetUsers(userParams);
+            Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
+
+            return Ok(users);
         }
 
         [HttpGet("{username}", Name="GetUser")]

@@ -8,6 +8,7 @@ using AutoMapper;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Models.Helpers;
 using Repository;
 
 namespace BusinessLogic
@@ -25,9 +26,9 @@ namespace BusinessLogic
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<MemberDto>> GetUsers()
+        public async Task<PagedList<MemberDto>> GetUsers(UserParams userParams)
         {
-            IEnumerable<MemberDto> users = await _userRepoLayer.GetMembersAsync();
+            var users = await _userRepoLayer.GetMembersAsync(userParams);
 
             return users;
         }
@@ -54,7 +55,8 @@ namespace BusinessLogic
             {
                 Username = newUser.UserName,
                 Token = _tokenService.CreateToken(user),
-                KnownAs = newUser.KnownAs
+                KnownAs = newUser.KnownAs,
+                Gender = newUser.Gender
             };
 
             return regUser;

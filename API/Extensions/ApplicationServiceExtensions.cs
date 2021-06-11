@@ -1,3 +1,4 @@
+using API.Helpers;
 using BusinessLogic;
 using BusinessLogic.Helpers;
 using BusinessLogic.Interfaces;
@@ -24,6 +25,7 @@ namespace API.Extensions
             services.AddScoped<IUserLogic, UserLogic>();
             services.AddScoped<IUserRepoLayer, UserRepoLayer>();
             services.AddScoped<IPhotoService, PhotoService>();
+            services.AddScoped<LogUserActivity>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             
 

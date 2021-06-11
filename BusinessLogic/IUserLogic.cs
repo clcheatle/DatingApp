@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Models.Helpers;
 
 namespace BusinessLogic
 {
@@ -11,7 +12,7 @@ namespace BusinessLogic
          /// Gets a list of users from the repo layer
          /// </summary>
          /// <returns></returns>
-         public Task<IEnumerable<MemberDto>> GetUsers();
+         public Task<PagedList<MemberDto>> GetUsers(UserParams userParams);
 
          /// <summary>
          /// Get a user by id from the repo layer

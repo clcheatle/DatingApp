@@ -20,7 +20,9 @@ namespace BusinessLogic.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId, User.UserName)
+                new Claim(JwtRegisteredClaimNames.NameId, User.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, User.UserName),
+
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
