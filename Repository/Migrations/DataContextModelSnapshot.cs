@@ -96,6 +96,21 @@ namespace Repository.Migrations
                     b.ToTable("Photos");
                 });
 
+            modelBuilder.Entity("Models.UserLike", b =>
+                {
+                    b.Property<int>("SourceUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LikedUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SourceUserId", "LikedUserId");
+
+                    b.HasIndex("LikedUserId");
+
+                    b.ToTable("Likes");
+                });
+
             modelBuilder.Entity("Models.Photo", b =>
                 {
                     b.HasOne("Models.AppUser", "AppUser")
@@ -107,8 +122,31 @@ namespace Repository.Migrations
                     b.Navigation("AppUser");
                 });
 
+            modelBuilder.Entity("Models.UserLike", b =>
+                {
+                    b.HasOne("Models.AppUser", "LikedUser")
+                        .WithMany("LikedByUsers")
+                        .HasForeignKey("LikedUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.AppUser", "SourceUser")
+                        .WithMany("LikedUsers")
+                        .HasForeignKey("SourceUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("LikedUser");
+
+                    b.Navigation("SourceUser");
+                });
+
             modelBuilder.Entity("Models.AppUser", b =>
                 {
+                    b.Navigation("LikedByUsers");
+
+                    b.Navigation("LikedUsers");
+
                     b.Navigation("Photos");
                 });
 #pragma warning restore 612, 618
