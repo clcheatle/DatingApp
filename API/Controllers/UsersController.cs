@@ -1,16 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Extensions;
 using AutoMapper;
-using BusinessLogic;
-using BusinessLogic.Interfaces;
+using API.BusinessLogic;
+using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Models;
-using Models.Helpers;
+using API.Models;
+using API.Helpers;
 
 namespace API.Controllers
 {

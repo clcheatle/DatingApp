@@ -1,12 +1,10 @@
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
+using API.BusinessLogic;
+using API.Interfaces;
+using API.Models;
 using AutoMapper;
-using BusinessLogic;
-using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Models;
 
 namespace API.Controllers
 {

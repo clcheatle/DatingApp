@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using API.Extensions;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Repository;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using API.Repository;
 
 namespace API.Helpers
 {

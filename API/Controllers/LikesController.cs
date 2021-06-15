@@ -1,12 +1,10 @@
 using System.Threading.Tasks;
 using API.Extensions;
-using BusinessLogic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models;
-using Repository;
-using System.Collections.Generic;
-using Models.Helpers;
+using API.Models;
+using API.Repository;
+using API.Helpers;
 
 namespace API.Controllers
 {

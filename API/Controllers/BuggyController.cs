@@ -1,8 +1,7 @@
+using API.Models;
+using API.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models;
-using Repository;
-
 namespace API.Controllers
 {
     public class BuggyController : BaseApiController

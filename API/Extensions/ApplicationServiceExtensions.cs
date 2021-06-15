@@ -1,12 +1,11 @@
+using API.BusinessLogic;
 using API.Helpers;
-using BusinessLogic;
-using BusinessLogic.Helpers;
-using BusinessLogic.Interfaces;
-using BusinessLogic.Services;
+using API.Interfaces;
+using API.Repository;
+using API.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Repository;
 
 namespace API.Extensions
 {
