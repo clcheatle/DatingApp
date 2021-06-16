@@ -20,14 +20,6 @@ namespace API.BusinessLogic
          public Task<AppUser> GetUserById(int id);
 
         /// <summary>
-        /// Given a username and password, register a new user
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-         public Task<UserDto> Register(AppUser user, RegisterDto registerDto);
-
-        /// <summary>
         /// Check to see if the user name already exists
         /// </summary>
         /// <param name="username"></param>
@@ -41,14 +33,6 @@ namespace API.BusinessLogic
         /// <returns></returns>
          public Task<MemberDto> GetUserByUsername(string username);
          public Task<AppUser> GetUserForLogin(string username);
-
-        /// <summary>
-        /// Method to check password to login in user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-         public bool Login(AppUser user, string password);
-
          public Task<bool> UpdateUser(MemberUpdateDto memberUpdateDto, string username);
 
          public Task<bool> SaveAllAsync();

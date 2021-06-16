@@ -38,27 +38,6 @@ namespace API.BusinessLogic
             return user;
         }
 
-        public async Task<UserDto> Register(AppUser user, RegisterDto registerDto)
-        {
-            using var hmac = new HMACSHA512();
-            
-            user.UserName = registerDto.Username.ToLower();
-            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
-            user.PasswordSalt = hmac.Key;
-
-            AppUser newUser = await _userRepoLayer.RegisterAsync(user);
-
-            UserDto regUser = new UserDto 
-            {
-                Username = newUser.UserName,
-                Token = _tokenService.CreateToken(user),
-                KnownAs = newUser.KnownAs,
-                Gender = newUser.Gender
-            };
-
-            return regUser;
-        }
-
         public async Task<bool> UserExists(string username)
         {
             return await _userRepoLayer.UserExistsAsync(username);
@@ -73,13 +52,6 @@ namespace API.BusinessLogic
         public async Task<AppUser> GetUserForLogin(string username)
         {
             return await _userRepoLayer.GetUserByUsernameAsync(username);
-        }
-
-        public bool Login(AppUser user, string password)
-        {
-            bool isLogin = UserMapper.CheckLoginPassword(user, password);
-
-            return isLogin;
         }
 
         public async Task<bool> UpdateUser(MemberUpdateDto memberUpdateDto, string username)

@@ -1,0 +1,7 @@
+button {
+    background-color: rgb(8, 131, 208);
+}
+
+th, td {
+    border-bottom: solid 1px lightgray;
+}
