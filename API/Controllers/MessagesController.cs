@@ -18,20 +18,20 @@ namespace API.Controllers
             _messagesLogic = messagesLogic;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto)
-        {
-            var username = User.GetUsername();
+        // [HttpPost]
+        // public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto)
+        // {
+        //     var username = User.GetUsername();
 
-            if(username == createMessageDto.RecipientUsername.ToLower()) return BadRequest("You cannot send messages to yourself");
+        //     if(username == createMessageDto.RecipientUsername.ToLower()) return BadRequest("You cannot send messages to yourself");
 
-            var result = await _messagesLogic.CreateMessage(createMessageDto, username);
+        //     var result = await _messagesLogic.CreateMessage(createMessageDto, username);
 
-            if(result == null) return BadRequest("Either recipient not found or failure occured while sending");
+        //     if(result == null) return BadRequest("Either recipient not found or failure occured while sending");
 
-            return Ok(result);
+        //     return Ok(result);
 
-        }
+        // }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessagesForUser([FromQuery] MessageParams messageParams)
