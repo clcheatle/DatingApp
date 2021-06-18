@@ -12,46 +12,46 @@ namespace API.BusinessLogic
 {
     public class UserLogic : IUserLogic
     {
-        private readonly IUserRepoLayer _userRepoLayer;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UserLogic(IUserRepoLayer userRepoLayer, ITokenService tokenService, IMapper mapper)
+        public UserLogic(IUnitOfWork unitOfWork, ITokenService tokenService, IMapper mapper)
         {
-            _userRepoLayer = userRepoLayer;
+            _unitOfWork = unitOfWork;
             _tokenService = tokenService;
             _mapper = mapper;
         }
 
         public async Task<PagedList<MemberDto>> GetUsers(UserParams userParams)
         {
-            var users = await _userRepoLayer.GetMembersAsync(userParams);
+            var users = await _unitOfWork.UserRepository.GetMembersAsync(userParams);
 
             return users;
         }
 
-        
+
         public async Task<AppUser> GetUserById(int id)
         {
-            AppUser user = await _userRepoLayer.getUserByIdAsync(id);
+            AppUser user = await _unitOfWork.UserRepository.getUserByIdAsync(id);
 
             return user;
         }
 
         public async Task<bool> UserExists(string username)
         {
-            return await _userRepoLayer.UserExistsAsync(username);
+            return await _unitOfWork.UserRepository.UserExistsAsync(username);
         }
 
         public async Task<MemberDto> GetUserByUsername(string username)
         {
-            var user = await _userRepoLayer.GetMemberAsync(username);
+            var user = await _unitOfWork.UserRepository.GetMemberAsync(username);
             return _mapper.Map<MemberDto>(user);
         }
 
         public async Task<AppUser> GetUserForLogin(string username)
         {
-            return await _userRepoLayer.GetUserByUsernameAsync(username);
+            return await _unitOfWork.UserRepository.GetUserByUsernameAsync(username);
         }
 
         public async Task<bool> UpdateUser(MemberUpdateDto memberUpdateDto, string username)
@@ -59,16 +59,16 @@ namespace API.BusinessLogic
             var user = await GetUserForLogin(username);
             _mapper.Map(memberUpdateDto, user);
 
-            _userRepoLayer.Update(user);
+            _unitOfWork.UserRepository.Update(user);
 
-            if(await _userRepoLayer.SaveAllAsync()) return true;
+            if (await _unitOfWork.Complete()) return true;
 
             return false;
         }
 
         public async Task<bool> SaveAllAsync()
         {
-            return await _userRepoLayer.SaveAllAsync();
+            return await _unitOfWork.Complete();
         }
     }
 }

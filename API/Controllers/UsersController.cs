@@ -19,32 +19,34 @@ namespace API.Controllers
         private readonly IUserLogic _userLogic;
         private readonly IPhotoService _photoService;
         private readonly IMapper _mapper;
-        
-        public UsersController(IUserLogic userLogic, IPhotoService photoService, IMapper mapper)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public UsersController(IUnitOfWork unitOfWork, IUserLogic userLogic, IPhotoService photoService, IMapper mapper)
         {
+            _unitOfWork = unitOfWork;
             _userLogic = userLogic;
             _photoService = photoService;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
+        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
         {
-            var user = await _userLogic.GetUserByUsername(User.GetUsername());
-            userParams.CurrentUsername = user.Username;
+            var gender = await _unitOfWork.UserRepository.GetUserGender(User.GetUsername());
+            userParams.CurrentUsername = User.GetUsername();
 
             if (string.IsNullOrEmpty(userParams.Gender))
             {
-                userParams.Gender = user.Gender == "male" ? "female" : "male";
+                userParams.Gender = gender == "male" ? "female" : "male";
             }
-            
+
             var users = await _userLogic.GetUsers(userParams);
             Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
 
             return Ok(users);
         }
 
-        [HttpGet("{username}", Name="GetUser")]
+        [HttpGet("{username}", Name = "GetUser")]
         public async Task<MemberDto> GetUserByUsername(string username)
         {
             var users = await _userLogic.GetUserByUsername(username);
@@ -56,10 +58,10 @@ namespace API.Controllers
         public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
         {
             var updateSuccess = await _userLogic.UpdateUser(memberUpdateDto, User.GetUsername());
-            if(updateSuccess) return NoContent();
+            if (updateSuccess) return NoContent();
 
             return BadRequest("Failed to update the user");
-        } 
+        }
 
         [HttpPost("add-photo")]
         public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
@@ -68,7 +70,7 @@ namespace API.Controllers
 
             var result = await _photoService.AddPhotoAsync(file);
 
-            if(result.Error != null) return BadRequest(result.Error.Message);
+            if (result.Error != null) return BadRequest(result.Error.Message);
 
             var photo = new Photo
             {
@@ -83,9 +85,9 @@ namespace API.Controllers
 
             user.Photos.Add(photo);
 
-            if (await _userLogic.SaveAllAsync()) 
+            if (await _userLogic.SaveAllAsync())
             {
-                return CreatedAtRoute("GetUser", new {username = user.UserName}, _mapper.Map<PhotoDto>(photo));
+                return CreatedAtRoute("GetUser", new { username = user.UserName }, _mapper.Map<PhotoDto>(photo));
             }
 
             return BadRequest("Problem adding photo");
@@ -97,13 +99,13 @@ namespace API.Controllers
             var user = await _userLogic.GetUserForLogin(User.GetUsername());
             var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
 
-            if(photo.IsMain) return BadRequest("This is already your main photo");
+            if (photo.IsMain) return BadRequest("This is already your main photo");
 
             var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
-            if(currentMain != null) currentMain.IsMain = false;
+            if (currentMain != null) currentMain.IsMain = false;
             photo.IsMain = true;
 
-            if(await _userLogic.SaveAllAsync()) return NoContent();
+            if (await _userLogic.SaveAllAsync()) return NoContent();
 
             return BadRequest("Failed to set main photo");
         }
@@ -115,14 +117,14 @@ namespace API.Controllers
 
             var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
 
-            if(photo == null) return NotFound();
+            if (photo == null) return NotFound();
 
-            if(photo.IsMain) return BadRequest("You cannot delete your main photo");
+            if (photo.IsMain) return BadRequest("You cannot delete your main photo");
 
-            if(photo.PublicId != null)
+            if (photo.PublicId != null)
             {
                 var result = await _photoService.DeletePhotoAsync(photo.PublicId);
-                if(result.Error != null) return BadRequest(result.Error.Message);
+                if (result.Error != null) return BadRequest(result.Error.Message);
             }
 
             user.Photos.Remove(photo);

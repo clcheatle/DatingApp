@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using API.Repository;
+using API.Interfaces;
 
 namespace API.Helpers
 {
@@ -16,10 +17,10 @@ namespace API.Helpers
             if (!resultContext.HttpContext.User.Identity.IsAuthenticated) return;
 
             var userId = resultContext.HttpContext.User.GetUserId();
-            var repo = resultContext.HttpContext.RequestServices.GetService<IUserRepoLayer>();
-            var user = await repo.getUserByIdAsync(userId);
+            var ouw = resultContext.HttpContext.RequestServices.GetService<IUnitOfWork>();
+            var user = await ouw.UserRepository.getUserByIdAsync(userId);
             user.LastActive = DateTime.Now;
-            await repo.SaveAllAsync();
+            await ouw.Complete();
         }
     }
 }

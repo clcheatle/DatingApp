@@ -1,4 +1,5 @@
 using API.BusinessLogic;
+using API.Data;
 using API.Helpers;
 using API.Interfaces;
 using API.Repository;
@@ -24,9 +25,7 @@ namespace API.Extensions
 
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserLogic, UserLogic>();
-            services.AddScoped<IUserRepoLayer, UserRepoLayer>();
-            services.AddScoped<IMessageRepository, MessageRepoLayer>();
-            services.AddScoped<ILikesRepository, LikesRepoLayer>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<LogUserActivity>();
             services.AddScoped<MessagesLogic>();

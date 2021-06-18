@@ -68,6 +68,13 @@ namespace API.Repository
             return user;
         }
 
+        public async Task<string> GetUserGender(string username)
+        {
+            return await  _dbContext.Users
+                .Where(x => x.UserName ==username)
+                .Select(x => x.Gender).FirstOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<AppUser>> getUsersAsync()
         {
             var users = await _dbContext.Users.Include(p => p.Photos).ToListAsync();
@@ -81,11 +88,6 @@ namespace API.Repository
             await _dbContext.SaveChangesAsync();
 
             return user;
-        }
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _dbContext.SaveChangesAsync() > 0;
         }
 
         public void Update(AppUser user)

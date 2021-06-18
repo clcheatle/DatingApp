@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Helpers;
+using API.Interfaces;
 using API.Models;
 using API.Repository;
 using AutoMapper;
@@ -8,22 +9,20 @@ namespace API.BusinessLogic
 {
     public class MessagesLogic
     {
-        private readonly IMessageRepository _messageRepository;
-        private readonly IUserRepoLayer _userRepoLayer;
         private readonly IMapper _mapper;
-        public MessagesLogic(IMessageRepository messageRepository, IUserRepoLayer userRepoLayer, IMapper mapper)
+        private readonly IUnitOfWork _unitOfWork;
+        public MessagesLogic(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _messageRepository = messageRepository;
-            _userRepoLayer = userRepoLayer;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         public async Task<MessageDto> CreateMessage(CreateMessageDto createMessageDto, string username)
         {
-            var sender = await _userRepoLayer.GetUserByUsernameAsync(username);
-            var recipent = await _userRepoLayer.GetUserByUsernameAsync(createMessageDto.RecipientUsername);
+            var sender = await _unitOfWork.UserRepository.GetUserByUsernameAsync(username);
+            var recipent = await _unitOfWork.UserRepository.GetUserByUsernameAsync(createMessageDto.RecipientUsername);
 
-            if(recipent == null) return null;
+            if (recipent == null) return null;
 
             var message = new Message
             {
@@ -34,30 +33,30 @@ namespace API.BusinessLogic
                 Content = createMessageDto.Content
             };
 
-            _messageRepository.AddMessage(message);
+            _unitOfWork.MessageRepository.AddMessage(message);
 
-            if(await _messageRepository.SaveAllAsync()) return _mapper.Map<MessageDto>(message);
+            if (await _unitOfWork.Complete()) return _mapper.Map<MessageDto>(message);
 
             return null;
         }
 
         public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)
         {
-            var messages = await _messageRepository.GetMessagesForUser(messageParams);
+            var messages = await _unitOfWork.MessageRepository.GetMessagesForUser(messageParams);
 
             return messages;
         }
 
         public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string username)
         {
-            var messages = await _messageRepository.GetMessageThread(currentUsername, username);
+            var messages = await _unitOfWork.MessageRepository.GetMessageThread(currentUsername, username);
 
             return messages;
         }
 
         public async Task<Message> GetMessage(int id)
         {
-            return await _messageRepository.GetMessage(id);
+            return await _unitOfWork.MessageRepository.GetMessage(id);
         }
 
         public async Task<bool> DeleteMessage(Message message, string username)
@@ -66,9 +65,9 @@ namespace API.BusinessLogic
 
             if (message.Recipient.UserName == username) message.RecipientDeleted = true;
 
-            if (message.SenderDeleted && message.RecipientDeleted) _messageRepository.DeleteMessage(message);
+            if (message.SenderDeleted && message.RecipientDeleted) _unitOfWork.MessageRepository.DeleteMessage(message);
 
-            if (await _messageRepository.SaveAllAsync()) return true;
+            if (await _unitOfWork.Complete()) return true;
 
             return false;
         }
