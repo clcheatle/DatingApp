@@ -24,7 +24,7 @@ namespace API.Extensions
             });
 
             services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IUserLogic, UserLogic>();
+            services.AddScoped<UserLogic>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<LogUserActivity>();

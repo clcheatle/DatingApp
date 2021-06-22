@@ -44,7 +44,8 @@ namespace API.Repository
          public void Update(AppUser user);
 
          Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams);
-         Task<MemberDto> GetMemberAsync(string username);
+         Task<MemberDto> GetMemberAsync(string username, bool isCurrentUser);
+         Task<AppUser> GetUserByPhotoId(int photoId);
          Task<string> GetUserGender(string username);
     }
 }

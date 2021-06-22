@@ -16,12 +16,12 @@ namespace API.Controllers
     [Authorize]
     public class UsersController : BaseApiController
     {
-        private readonly IUserLogic _userLogic;
+        private readonly UserLogic _userLogic;
         private readonly IPhotoService _photoService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UsersController(IUnitOfWork unitOfWork, IUserLogic userLogic, IPhotoService photoService, IMapper mapper)
+        public UsersController(IUnitOfWork unitOfWork, UserLogic userLogic, IPhotoService photoService, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _userLogic = userLogic;
@@ -49,8 +49,9 @@ namespace API.Controllers
         [HttpGet("{username}", Name = "GetUser")]
         public async Task<MemberDto> GetUserByUsername(string username)
         {
-            var users = await _userLogic.GetUserByUsername(username);
-
+            var currentUsername = User.GetUsername();
+            var users = await _userLogic.GetUserByUsername(username, 
+                isCurrentUser: currentUsername == username);
             return users;
         }
 
@@ -66,31 +67,23 @@ namespace API.Controllers
         [HttpPost("add-photo")]
         public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
         {
-            var user = await _userLogic.GetUserForLogin(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var result =await _photoService.AddPhotoAsync(file);
 
-            var result = await _photoService.AddPhotoAsync(file);
+            if(result.Error !=null) return BadRequest(result.Error.Message);
 
-            if (result.Error != null) return BadRequest(result.Error.Message);
-
-            var photo = new Photo
-            {
+            var photo =new Photo {                
                 Url = result.SecureUrl.AbsoluteUri,
                 PublicId = result.PublicId
-            };
-
-            if (user.Photos.Count == 0)
-            {
-                photo.IsMain = true;
-            }
-
+            };            
+            
             user.Photos.Add(photo);
 
-            if (await _userLogic.SaveAllAsync())
-            {
-                return CreatedAtRoute("GetUser", new { username = user.UserName }, _mapper.Map<PhotoDto>(photo));
+            if(await _unitOfWork.Complete()){
+                return CreatedAtRoute("GetUser",new{ username =user.UserName }, _mapper.Map<PhotoDto>(photo));
             }
-
-            return BadRequest("Problem adding photo");
+            
+            return BadRequest("Problem addding photo");
         }
 
         [HttpPut("set-main-photo/{photoId}")]

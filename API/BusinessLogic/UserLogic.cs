@@ -10,7 +10,7 @@ using AutoMapper;
 
 namespace API.BusinessLogic
 {
-    public class UserLogic : IUserLogic
+    public class UserLogic
     {
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
@@ -43,9 +43,9 @@ namespace API.BusinessLogic
             return await _unitOfWork.UserRepository.UserExistsAsync(username);
         }
 
-        public async Task<MemberDto> GetUserByUsername(string username)
+        public async Task<MemberDto> GetUserByUsername(string username, bool isCurrentUser)
         {
-            var user = await _unitOfWork.UserRepository.GetMemberAsync(username);
+            var user = await _unitOfWork.UserRepository.GetMemberAsync(username, isCurrentUser);
             return _mapper.Map<MemberDto>(user);
         }
 

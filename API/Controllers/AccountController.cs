@@ -12,13 +12,13 @@ namespace API.Controllers
 {
     public class AccountController : BaseApiController
     {
-        private readonly IUserLogic _userLogic;
+        private readonly UserLogic _userLogic;
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IUserLogic userLogic, ITokenService tokenService, IMapper mapper)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, UserLogic userLogic, ITokenService tokenService, IMapper mapper)
         {
             _userLogic = userLogic;
             _tokenService = tokenService;
